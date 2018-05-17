@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\吴贝贝\Desktop\AvlTree.cpp">
+    <ClCompile Include="AvlTree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\吴贝贝\Desktop\Main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\吴贝贝\Desktop\AvlTree.h">
+    <ClInclude Include="AvlTree.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
