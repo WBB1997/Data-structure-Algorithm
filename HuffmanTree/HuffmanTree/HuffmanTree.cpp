@@ -82,7 +82,7 @@ public:
 			*b = temp;
 		}
 	}
-	void Huff_Tree(string str, vector<int>& w)
+	void Huff_Tree(vector<char>& str, vector<int>& w)
 	{
 		for (int i = 0; i < 2 * n - 1; i++) {//初始过程
 			huffTree[i].parent = -1;
@@ -155,9 +155,9 @@ int main()
 	//编码过程
 	int n;
 	cin >> n;
-	string s("");
+	vector<char> s;
 	vector<int> w;
-	for (unsigned i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		char c;
 		int weight;
 		cin >> c >> weight;
