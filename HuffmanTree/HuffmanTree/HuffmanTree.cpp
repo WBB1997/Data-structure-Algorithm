@@ -1,6 +1,7 @@
 #include <iostream>  
 #include <string>
 #include <vector>
+#include <stdio.h>
 using namespace std;
 
 struct Node
@@ -149,15 +150,21 @@ public:
 
 int main()
 {
-	// 重定向与文本文件
+	// 重定向与文本文件,这里修改读取文件
 	freopen("1.txt", "r", stdin);
 	//编码过程
-	string s;
-	cin >> s;
-	vector<int> w(s.length());
-	for (unsigned i = 0; i < s.length(); i++)
-		cin >> w[i];
-	HuffMan hf(s.length());
+	int n;
+	cin >> n;
+	string s("");
+	vector<int> w;
+	for (unsigned i = 0; i < n; i++) {
+		char c;
+		int weight;
+		cin >> c >> weight;
+		s.push_back(c);
+		w.push_back(weight);
+	}
+	HuffMan hf(n);
 	hf.Huff_Tree(s, w);
 	cout << "各个字符编码为：" << endl;
 	hf.Huff_Code();
