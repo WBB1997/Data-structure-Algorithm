@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <stdio.h>
+#include <windows.h>
+#include <fstream>
 using namespace std;
 
 struct Node
@@ -14,7 +16,7 @@ struct Node
 
 class HuffMan {
 private:
-	Node* huffTree; // 树
+	Node * huffTree; // 树
 	int n;  // 字符数
 	int* w; // 权值
 public:
@@ -84,13 +86,14 @@ public:
 	}
 	void Huff_Tree(vector<char>& str, vector<int>& w)
 	{
-		for (int i = 0; i < 2 * n - 1; i++) {//初始过程
+		int i;
+		for (i = 0; i < 2 * n - 1; i++) {//初始过程
 			huffTree[i].parent = -1;
 			huffTree[i].lchild = -1;
 			huffTree[i].rchild = -1;
 			huffTree[i].code = "";
 		}
-		for (int i = 0; i < n; i++) {
+		for (i = 0; i < n; i++) {
 			huffTree[i].weight = w[i];
 			huffTree[i].ch = str[i];
 		}
@@ -129,7 +132,20 @@ public:
 		}
 	}
 	string Huff_Decode(string s) {
-		cout << "解码后为：";
+		char temp;
+		string str = "";//保存解码后的字符串
+		for (unsigned i = 0; i < s.size(); i++) {
+			temp = s[i];
+			for (int j = 0; j < n; j++) {
+				if (temp == huffTree[j].ch) {
+					str = str + huffTree[j].code;
+					break;
+				}
+			}
+		}
+		return str;
+	}
+	string Huff_Encode(string s) {
 		string temp = "", str = "";//保存解码后的字符串
 		for (unsigned i = 0; i < s.size(); i++) {
 			temp = temp + s[i];
@@ -148,10 +164,11 @@ public:
 	}
 };
 
-int main()
+
+void start()
 {
 	// 重定向与文本文件,这里修改读取文件
-	freopen("1.txt", "r", stdin);
+	freopen("哈夫曼处理数据文件.txt", "r", stdin);
 	//编码过程
 	int n;
 	cin >> n;
@@ -164,12 +181,54 @@ int main()
 		s.push_back(c);
 		w.push_back(weight);
 	}
+	cout << "从默认文件中读出的基础数据如下：" << endl;
+	for (int i = 0; i < n; i++)
+		cout << s[i] << " ";
+	cout << endl;
+	for (int i = 0; i < n; i++)
+		cout << w[i] << " ";
+	cout << endl << endl;
+
+	// 开始编码
 	HuffMan hf(n);
 	hf.Huff_Tree(s, w);
 	cout << "各个字符编码为：" << endl;
 	hf.Huff_Code();
-	//解码过程
-	string s1("01010101");
-	cout << hf.Huff_Decode(s1) << endl;
+	cout << endl;
+
+	// 开始文件读入字符串
+	ifstream in("1.txt");
+	string str;
+	getline(in, str);
+	cout << "从文本文件中读入的字符串为：" << str << endl;
+	in.close();
+
+	// 开始编码字符串，然后存入文件
+	ofstream out("2.txt");
+	str = hf.Huff_Decode(str);
+	cout << "下面进行编码。编码结果为：" << str << endl;
+	out << str;
+	cout << "本结果已经存入文件！！！" << endl << endl;
+	out.close();
+
+	// 开始从文件中读入二进制编码进行解码
+	in.open("2.txt");
+	getline(in, str);
+	cout << "下面从文件中读入二进制编码进行解码。" << endl;
+	cout << "数据为:" << str << endl;
+	str = hf.Huff_Encode(str);
+	cout << "解码后为：" << str << endl;
+	cout << "解码完毕，和原数据完全一致！！！" << endl << endl;
+
+}
+
+int main()
+{
+	system("color f0");
+	SetConsoleTitle("哈夫曼编码功能展示"); //设置标题
+	start();
+	system("pause");
+	exit(1);
 	return 0;
 }
+//结束
