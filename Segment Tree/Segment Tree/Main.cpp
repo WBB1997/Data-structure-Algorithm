@@ -75,12 +75,12 @@ int Query(int L, int R, int l, int r, int p) { // L,R ´ú±íĞèÒª²éÑ¯µÄÇø¼ä£¬[l,r]±
 	//    [L          R]
 	// [......m]
 	if (L <= m)
-		ans += Query(L, R, l, m, p * 2);
+		ans += Query(L, m, l, m, p * 2);
 	// µÚ¶şÖÖÇé¿ö
 	// [L          R]
 	//         [m+1....]
 	if (R >= m + 1)
-		ans += Query(L, R, m + 1, r, p * 2 + 1);
+		ans += Query(m + 1, R, m + 1, r, p * 2 + 1);
 	return ans;
 }
 
