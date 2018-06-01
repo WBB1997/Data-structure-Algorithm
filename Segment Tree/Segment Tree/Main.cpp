@@ -3,12 +3,29 @@
 #define maxn 10000
 using namespace std;
 int tree[maxn * 4]; // ¿ª4±¶µÄ¿Õ¼äÓÃÀ´Ä£ÄâÊ÷
+int lazy[maxn * 4]; // ´¢´æÃ¿¸ö½ÚµãµÄÀÁ¶è±ê¼Ç
 int A[maxn];        // ´¢´æÔ­Ê¼Êı¾İµÄÊı×é
 
 // Õë¶ÔÏß¶ÎÊ÷µÄ²»Í¬Ó¦ÓÃÓ¦½øĞĞ²»Í¬µÄ½Úµã¸üĞÂ·½Ê½
 void PushUp(int p) {   // p´ú±íÊ÷ÖĞµÄµ±Ç°½ÚµãÎ»ÖÃ
 	// ÕâÀïÊÇ½øĞĞÇø¼ä¼Ó·¨
+	// È·±£ÔÚ¸üĞÂµ±Ç°½ÚµãÖµÖ®Ç°£¬ÒÑ¾­½«µ±Ç°½ÚµãµÄÀÁ¶è±ê¼ÇÏÂÍÆ
 	tree[p] = tree[p * 2] + tree[p * 2 + 1];
+}
+
+// ÏÂÍÆÀÁ¶è±ê¼Ç
+void PushDown(int p, int l_num, int r_num) { // pÎªµ±Ç°Ê÷½Úµã£¬l_numÎª×ó×ÓÊ÷µÄÇø¼ä³¤¶È, r_numÎªÓÒ×ÓÊ÷µÄÇø¼ä³¤¶È
+	// Èç¹ûµ±Ç°½ÚµãÓĞÀÁ¶è±ê¼Ç£¬ÔòÏÂÍÆ
+	if (lazy[p]) {
+		// ÏÂÍÆ±ê¼Ç
+		lazy[p * 2] += lazy[p];
+		lazy[p * 2 + 1] += lazy[p];
+		// ĞŞ¸Ä×óÓÒ×ÓÊ÷µÄÖµ
+		tree[p * 2] += lazy[p] * l_num;
+		tree[p * 2 + 1] += lazy[p] * r_num;
+		// ÏÂÍÆÍê³É£¬Çå³ıµ±Ç°½ÚµãµÄÀÁ¶è±ê¼Ç
+		lazy[p] = 0;
+	}
 }
 
 // µİ¹é½¨Á¢Ïß¶ÎÊ÷
@@ -31,6 +48,9 @@ void Update(int T, int C, int l, int r, int p) { // [l,r]±íÊ¾µ±Ç°½Úµã´ú±íµÄÇø¼ä,
 		return;
 	}
 	int m = (l + r) / 2; // ½«Çø¼äÒ»·ÖÎª2£¬È»ºó·ÖÇé¿öĞŞ¸Ä×ó×ÓÊ÷»òÓÒ×ÓÊ÷ [l,m],[m+1,r]
+	// ĞŞ¸ÄÖ®Ç°ÏÈÏÂÍÆ±ê¼Ç
+	PushDown(p, m - l + 1, r - m);
+
 	if (T <= m)
 		Update(T, C, l, m, p * 2);
 	else
@@ -45,6 +65,9 @@ int Query(int L, int R, int l, int r, int p) { // L,R ´ú±íĞèÒª²éÑ¯µÄÇø¼ä£¬[l,r]±
 		return tree[p];
 	}
 	int m = (l + r) / 2;// ½«Çø¼äÒ»·ÖÎª2 [l,m],[m+1,r]
+	// ²éÑ¯Ö®Ç°ÏÈÏÂÍÆ±ê¼Ç
+	PushDown(p, m - l + 1, r - m);
+
 	// È»ºó½øĞĞ·Ö±ğÇóºÍ£¬×îºóÏà¼Ó
 	// ´æÔÚÖØµşµÄÇø¼ä£¬Ôòµİ¹éÇóºÍ
 	int ans = 0;
@@ -61,13 +84,56 @@ int Query(int L, int R, int l, int r, int p) { // L,R ´ú±íĞèÒª²éÑ¯µÄÇø¼ä£¬[l,r]±
 	return ans;
 }
 
+// Çø¼äĞŞ¸Ä
+void Add(int L, int R, int C, int l, int r, int p) { // ½«[L,R] += C, l,rÎªµ±Ç°Çø¼ä,pÎªµ±Ç°Ê÷½Úµã
+	if (L == l && R == r) { // ÕÒµ½Ä¿±êÇø¼ä
+		// ÏÈ¸üĞÂÀÁ¶è±ê¼Ç
+		lazy[p] += C;
+		// ÔÙ¸üĞÂµ±Ç°Öµ
+		tree[p] += (R - L + 1) * C;
+		return;
+	}
+	// µ½´ïÒ¶×Ó½Úµã£¬·µ»Ø
+	if (l == r)
+		return;
+	int m = (l + r) / 2;
+	// ÏÈÏÂÍÆ±ê¼Ç
+	PushDown(p, m - l + 1, r - m);
+	// ÔÙ·ÖÇé¿ö½øĞĞÇø¼äĞŞ¸Ä
+	//         µÚÒ»ÖÖÇé¿ö
+	//    [l      m][m+1     R]
+	// [L     R]
+	if (R <= m)
+		Add(L, R, C, l, m, p * 2);
+	//         µÚ¶şÖÖÇé¿ö
+	//    [l      m][m+1     R]
+	//                   [L     R]
+	else if (L >= m + 1)
+		Add(L, R, C, m + 1, r, p * 2 + 1);
+	//          µÚÈıÖÖÇé¿ö
+	//    [l      m][m+1     R]
+	//       [L          R]
+	//       [L  m][m+1  R]
+	else {
+		Add(L, m, C, l, m, p * 2);
+		Add(m+1, R, C, m + 1, r, p * 2 + 1);
+	}
+	PushUp(p);
+}
+
 int main() {
 	for (int i = 0; i <= 12; i++) {
 		A[i+1] = i % 4 + 1;
 	}
 	// A[0,1,2,3,4,1,2,3,4,1,2,3,4,1,...]
+
 	Build(1, 13, 1);
-	cout << Query(2, 12, 1, 13, 1) << endl; // 29
-	Update(6, 7, 1, 13, 1);
-	cout << Query(2, 12, 1, 13, 1) << endl; // 36
+	cout << Query(1, 13, 1, 13, 1) << endl; // 29
+
+	Update(6, 7, 1, 13, 1);  // A[6] += 7;
+	cout << Query(1, 13, 1, 13, 1) << endl; // 36
+
+	Add(2, 12, 1, 1, 13, 1); // [2, 12] += 1;
+	cout << Query(1, 13, 1, 13, 1) << endl; // 47
+	return 0;
 }
