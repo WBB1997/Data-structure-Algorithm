@@ -47,16 +47,20 @@ void build() {
 					// 依次找第一长前缀，第二长前缀...直到达到root
 					node* p = cur->fail;
 					while (p != NULL) {
+						// 如果当前前缀存在
 						if (p->next[i] != NULL) {
 							cur->next[i]->fail = p->next[i];
 							break;
 						}
 						else
+						// 如果不存在
 							p = p->fail;
 					}
+					// 如果到达root节点了
 					if (p == NULL)
 						cur->next[i]->fail = root;
 				}
+				// 将当前字符存入队列
 				q.push(cur->next[i]);
 			}
 		}
