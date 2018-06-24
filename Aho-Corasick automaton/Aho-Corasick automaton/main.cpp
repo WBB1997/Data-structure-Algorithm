@@ -60,7 +60,7 @@ void build() {
 					if (p == NULL)
 						cur->next[i]->fail = root;
 				}
-				// 将当前字符存入队列
+				// 将当前前缀存入队列
 				q.push(cur->next[i]);
 			}
 		}
